@@ -18,9 +18,16 @@ const nextConfig = {
         hostname: '**.cloud.directus.io',
         pathname: '/assets/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cms.parthkoshti.com', // ✅ your actual Directus domain
+        pathname: '/assets/**',
+      },
     ],
+  },
+  experimental: {
+    esmExternals: true, // ✅ allows importing ESM-only modules (like next-mdx-remote/rsc)
   },
 };
 
 module.exports = nextConfig;
-

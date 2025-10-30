@@ -4,14 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Github, Linkedin, Twitter, Mail } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Twitter, Mail, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
-  { name: 'Projects', href: '/projects' },
   { name: 'Blog', href: '/blog' },
+  { name: 'Hire', href: '/hire' },
 ];
 
 const socialLinks = [
@@ -24,6 +25,7 @@ const socialLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -55,8 +57,17 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Social Links */}
+          {/* Right actions */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Theme toggle */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-9 h-9 inline-flex items-center justify-center rounded-md border border-border hover:bg-accent"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
+            </button>
+
             {socialLinks.map((item) => (
               <a
                 key={item.name}
@@ -91,6 +102,17 @@ export default function Navbar() {
               className="md:hidden border-t border-border"
             >
               <div className="py-4 space-y-4">
+                {/* Theme toggle */}
+                <div className="px-3">
+                  <button
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-border hover:bg-accent"
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
+                    Toggle theme
+                  </button>
+                </div>
+
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
