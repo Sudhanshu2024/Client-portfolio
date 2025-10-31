@@ -22,7 +22,7 @@ export default function BlogList({ posts }: BlogListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filtered.map((post) => (
-        <article key={post.id} className="group bg-card rounded-xl overflow-hidden shadow-md border border-border card-hover">
+        <article key={post.id} className="group bg-card rounded-xl overflow-hidden border border-border card-hover">
           <Link href={`/blog/${post.slug || post.id}`}>
             {/* Optional image */}
             {post.thumbnail ? (
@@ -30,7 +30,7 @@ export default function BlogList({ posts }: BlogListProps) {
                 <Image src={post.thumbnail} alt={post.title} fill className="object-cover" />
               </div>
             ) : (
-              <div className="h-2 bg-primary w-24 ml-6 mt-6 rounded" />
+              <div className="h-2 bg-foreground w-24 ml-6 mt-6 rounded" />
             )}
 
             <div className="p-6">
@@ -38,11 +38,11 @@ export default function BlogList({ posts }: BlogListProps) {
                 <Calendar className="w-4 h-4 mr-2" />
                 {format(new Date(post.date_published), 'MMM dd, yyyy')}
               </div>
-              <h3 className="text-xl font-semibold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-semibold mb-2 line-clamp-2 group-hover:text-foreground transition-colors">
                 {post.title}
               </h3>
               <p className="text-muted-foreground line-clamp-3">{post.preview}</p>
-              <div className="mt-4 inline-flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
+              <div className="mt-4 inline-flex items-center text-foreground font-medium group-hover:translate-x-1 transition-transform">
                 Read More
                 <ArrowRight className="ml-2 w-4 h-4" />
               </div>

@@ -22,17 +22,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-muted/30 border-t border-border">
+    <footer className="bg-background border-t border-border">
       <div className="container">
         <div className="py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand */}
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">P</span>
-                </div>
-                <span className="font-bold text-xl gradient-text">Portfolio</span>
+                <span className="text-base font-semibold tracking-tight">PK</span>
               </Link>
               <p className="text-muted-foreground mb-6 max-w-md">
                 A passionate developer creating beautiful, functional, and user-centered digital experiences.
@@ -46,10 +43,10 @@ export default function Footer() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(
-                      "w-10 h-10 rounded-lg bg-background border border-border",
+                  className={cn(
+                      "w-10 h-10 rounded-md bg-background border border-border",
                       "flex items-center justify-center text-muted-foreground",
-                      "hover:text-primary hover:border-primary transition-colors"
+                      "hover:text-foreground transition-colors"
                     )}
                     aria-label={item.name}
                   >

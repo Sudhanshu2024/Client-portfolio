@@ -2,26 +2,31 @@ import { Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
-import { getBlogPosts } from '@/lib/directus';
-import BlogTagFilter from '@/components/blog/TagFilter';
+import { getBlogPosts, getAssetUrl } from '@/lib/directus';
+import HomeIntro from '@/components/HomeIntro';
 import BlogList from '@/components/blog/List';
+import BlogGrid from '@/components/BlogGrid';
 
 async function BlogSection() {
-  const posts = await getBlogPosts();
-  const allTags = Array.from(
-    new Set(posts.flatMap(p => Array.isArray(p.tags) ? p.tags : []))
-  ).sort();
+  const posts = (await getBlogPosts()).slice(0, 4);
   return (
-    <section className="section-padding bg-muted/30">
-      <div className="container space-y-8">
-        <BlogTagFilter tags={allTags} />
-        <BlogList posts={posts} />
-      </div>
-    </section>
+    <>
+      <BlogGrid
+        posts={posts}
+        title="Thoughts"
+        subtitle="Some of them."
+        showViewAll={true}
+        maxPosts={4}
+        columnsClass="grid-cols-1 md:grid-cols-2 lg:grid-cols-2"
+        viewAllHref="/blog"
+        viewAllText="Read all"
+      />
+    </>
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const heroImage = getAssetUrl('1a90cbf3-aa45-49c6-abc8-3cd748fe436a');
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -35,7 +40,11 @@ export default function HomePage() {
           ctaLink="/blog"
           secondaryCtaText="Hire Me"
           secondaryCtaLink="/hire"
+          imageUrl={heroImage}
         />
+
+        {/* Intro section below Hero */}
+        <HomeIntro />
         
         <Suspense fallback={
           <section className="section-padding bg-muted/30">

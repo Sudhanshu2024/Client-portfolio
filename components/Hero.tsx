@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +14,7 @@ interface HeroProps {
   ctaLink?: string;
   secondaryCtaText?: string;
   secondaryCtaLink?: string;
+  imageUrl?: string | null;
 }
 
 export default function Hero({
@@ -22,10 +24,11 @@ export default function Hero({
   ctaText = "View Projects",
   ctaLink = "/projects",
   secondaryCtaText = "Download CV",
-  secondaryCtaLink = "/cv.pdf"
+  secondaryCtaLink = "/cv.pdf",
+  imageUrl,
 }: HeroProps) {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/20">
+    <section className="min-h-[80vh] flex items-center justify-center bg-background">
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -40,17 +43,16 @@ export default function Hero({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
+                className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight"
               >
-                Hi, I'm{' '}
-                <span className="gradient-text">{name}</span>
+                Hi, I'm {name}
               </motion.h1>
               
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-muted-foreground"
+                className="text-2xl sm:text-3xl lg:text-4xl font-medium text-muted-foreground"
               >
                 {title}
               </motion.h2>
@@ -60,7 +62,7 @@ export default function Hero({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg text-muted-foreground max-w-lg leading-relaxed"
+              className="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed"
             >
               {description}
             </motion.p>
@@ -69,14 +71,13 @@ export default function Hero({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-3"
             >
               <Link
                 href={ctaLink}
                 className={cn(
-                  "inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300",
-                  "bg-primary text-primary-foreground hover:bg-primary/90",
-                  "shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  "inline-flex items-center justify-center px-5 py-2.5 rounded-md font-medium transition-colors",
+                  "border border-border bg-background text-foreground hover:bg-accent"
                 )}
               >
                 {ctaText}
@@ -86,9 +87,8 @@ export default function Hero({
               <Link
                 href={secondaryCtaLink}
                 className={cn(
-                  "inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300",
-                  "border border-border bg-background hover:bg-accent hover:text-accent-foreground",
-                  "shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                  "inline-flex items-center justify-center px-5 py-2.5 rounded-md font-medium transition-colors",
+                  "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Download className="mr-2 w-4 h-4" />
@@ -98,50 +98,15 @@ export default function Hero({
           </motion.div>
 
           {/* Visual Element */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="relative w-full h-96 lg:h-[500px] rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-              {/* Placeholder for profile image or illustration */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white text-6xl font-bold">
-                    {name.split(' ').map(n => n[0]).join('')}
-                  </span>
-                </div>
+          <div className="hidden lg:block">
+            {imageUrl ? (
+              <div className="relative w-full h-96 lg:h-[520px] rounded-xl overflow-hidden border border-border">
+                <Image src={imageUrl} alt={name} fill className="object-cover" />
               </div>
-              
-              {/* Floating elements */}
-              <motion.div
-                animate={{ 
-                  y: [0, -20, 0],
-                  rotate: [0, 5, 0]
-                }}
-                transition={{ 
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute top-10 right-10 w-16 h-16 bg-blue-500/30 rounded-lg backdrop-blur-sm"
-              />
-              <motion.div
-                animate={{ 
-                  y: [0, 20, 0],
-                  rotate: [0, -5, 0]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
-                }}
-                className="absolute bottom-10 left-10 w-12 h-12 bg-purple-500/30 rounded-full backdrop-blur-sm"
-              />
-            </div>
-          </motion.div>
+            ) : (
+              <div className="relative w-full h-96 lg:h-[520px] rounded-xl overflow-hidden border border-dashed border-border" />
+            )}
+          </div>
         </div>
       </div>
     </section>

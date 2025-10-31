@@ -11,35 +11,43 @@ import { BlogPost } from '@/lib/directus';
 interface BlogGridProps {
   posts: BlogPost[];
   title?: string;
+  subtitle?: string;
   showViewAll?: boolean;
   maxPosts?: number;
+  viewAllHref?: string;
+  viewAllText?: string;
+  columnsClass?: string; // override grid columns
 }
 
-export default function BlogGrid({ 
-  posts, 
+export default function BlogGrid({
+  posts,
   title = "Latest Blog Posts",
+  subtitle,
   showViewAll = true,
-  maxPosts = 6
+  maxPosts = 6,
+  viewAllHref = "/blog",
+  viewAllText = "View All Posts",
+  columnsClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
 }: BlogGridProps) {
   const displayedPosts = posts.slice(0, maxPosts);
 
   return (
-    <section className="section-padding bg-muted/30">
+    <section className="section-padding bg-background">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">{title}</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Thoughts, tutorials, and insights about web development, design, and technology.
-          </p>
+          <h2 className="text-3xl sm:text-4xl font-semibold mb-2">{title}</h2>
+          {subtitle && (
+            <p className="text-base text-muted-foreground">{subtitle}</p>
+          )}
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className={`grid ${columnsClass} gap-8 items-stretch`}>
           {displayedPosts.map((post, index) => (
             <motion.article
               key={post.id}
@@ -47,40 +55,30 @@ export default function BlogGrid({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group"
+              className="group h-full"
             >
               <Link href={`/blog/${post.slug}`}>
-                <div className="card-hover bg-card rounded-xl overflow-hidden shadow-md border border-border">
+                <div className="card-hover bg-card rounded-xl overflow-hidden border border-border h-full flex flex-col min-h-[320px]">
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
                     <Image
                       src={post.thumbnail || '/api/placeholder/400/250'}
                       alt={post.title}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    <div className="absolute inset-0" />
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
+                  <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center text-sm text-muted-foreground mb-3">
                       <Calendar className="w-4 h-4 mr-2" />
-                      {format(new Date(post.date_created), 'MMM dd, yyyy')}
+                      {format(new Date(post.date_published), 'MMM dd, yyyy')}
                     </div>
-                    
-                    <h3 className="text-xl font-semibold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-xl font-semibold mb-0 line-clamp-2 group-hover:text-foreground transition-colors">
                       {post.title}
                     </h3>
-                    
-                    <p className="text-muted-foreground mb-4 line-clamp-3">
-                      {post.description}
-                    </p>
-                    
-                    <div className="flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
-                      Read More
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </div>
                   </div>
                 </div>
               </Link>
@@ -88,24 +86,16 @@ export default function BlogGrid({
           ))}
         </div>
 
-        {showViewAll && posts.length > maxPosts && (
+        {showViewAll && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.4 }}
             viewport={{ once: true }}
-            className="text-center mt-12"
+            className="text-center mt-10"
           >
-            <Link
-              href="/blog"
-              className={cn(
-                "inline-flex items-center px-6 py-3 rounded-lg font-medium transition-all duration-300",
-                "bg-primary text-primary-foreground hover:bg-primary/90",
-                "shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-              )}
-            >
-              View All Posts
-              <ArrowRight className="ml-2 w-4 h-4" />
+            <Link href={viewAllHref} className="inline-flex items-center text-foreground hover:opacity-80">
+              {viewAllText}
             </Link>
           </motion.div>
         )}

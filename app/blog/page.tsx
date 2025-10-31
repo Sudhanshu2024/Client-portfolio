@@ -6,11 +6,12 @@ import { format } from 'date-fns';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getBlogPosts } from '@/lib/directus';
+import BlogTagFilter from '@/components/blog/TagFilter';
 import { cn } from '@/lib/utils';
 
 const FALLBACK_BLOG_POSTS: any[] = [];
 
-async function BlogGrid() {
+async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
   let blogPosts = FALLBACK_BLOG_POSTS;
   
   try {
@@ -22,9 +23,13 @@ async function BlogGrid() {
     console.log('Using fallback blog posts');
   }
 
+  const filteredPosts = selectedTag && selectedTag !== 'all'
+    ? blogPosts.filter((p: any) => Array.isArray(p.tags) && p.tags.includes(selectedTag))
+    : blogPosts;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {blogPosts.map((post) => (
+      {filteredPosts.map((post) => (
         <article key={post.id} className="group">
           <Link href={`/blog/${post.slug}`}>
             <div className="card-hover bg-card rounded-xl overflow-hidden shadow-md border border-border">
@@ -67,7 +72,20 @@ async function BlogGrid() {
   );
 }
 
-export default function BlogPage() {
+async function BlogTagBar() {
+  const posts = await getBlogPosts();
+  const tags = Array.from(new Set(posts.flatMap((p: any) => Array.isArray(p.tags) ? p.tags : []))).sort();
+  return (
+    <section className="bg-background pt-4 pb-8">
+      <div className="container">
+        <BlogTagFilter tags={tags} />
+      </div>
+    </section>
+  );
+}
+
+export default function BlogPage({ searchParams }: { searchParams?: { tag?: string } }) {
+  const selectedTag = searchParams?.tag;
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -88,6 +106,12 @@ export default function BlogPage() {
           </div>
         </section>
 
+        {/* Tag Filter at top */}
+        <Suspense>
+          {/* no heavy fallback needed here */}
+          <BlogTagBar />
+        </Suspense>
+
         {/* Blog Posts Grid */}
         <section className="section-padding bg-muted/30">
           <div className="container">
@@ -106,7 +130,7 @@ export default function BlogPage() {
                 ))}
               </div>
             }>
-              <BlogGrid />
+              <BlogGrid selectedTag={selectedTag} />
             </Suspense>
           </div>
         </section>
