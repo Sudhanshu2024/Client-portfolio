@@ -1,9 +1,20 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Poppins, Raleway } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
 
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans' });
+// Move font declarations here - at module scope
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['100','200','300','400','500','600','700','800','900'],
+  variable: '--font-alt'
+});
+
+const raleway = Raleway({
+  subsets: ['latin'],
+  weight: ['100','200','300','400','500','600','700','800','900'],
+  variable: '--font-sans'
+});
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio',
@@ -33,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${plusJakarta.variable} antialiased`}>
+      <body className={`${poppins.variable} ${raleway.variable} antialiased font-sans`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
