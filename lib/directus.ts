@@ -1,3 +1,4 @@
+import { unstable_cache as nextCache } from 'next/cache';
 
 export interface BlogPost {
   id: string;
@@ -50,7 +51,7 @@ function processThumbnail(thumbnailField: any): string | null {
 }
 
 // Helper functions for fetching data
-export async function getBlogPosts(): Promise<BlogPost[]> {
+async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
     const params = new URLSearchParams({
       fields: [
@@ -102,7 +103,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   }
 }
 
-export async function getBlogPost(slug: string) {
+async function fetchBlogPost(slug: string) {
   const url = `${DIRECTUS_URL}/items/Blog?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,tags.*,thumbnail.*`;
 
   try {
@@ -145,7 +146,7 @@ export async function getBlogPost(slug: string) {
 
 // Fetch a hero image from the `library` collection in Directus.
 // It tries common field names that might store a file id.
-export async function getLibraryHeroImage(): Promise<string | null> {
+async function fetchLibraryHeroImage(): Promise<string | null> {
   if (!DIRECTUS_URL) return null;
   try {
     const params = new URLSearchParams({
@@ -181,7 +182,7 @@ export async function getLibraryHeroImage(): Promise<string | null> {
 
 // Fetch a file from Directus `/files` by folder name and file title.
 // This is useful when you know the folder (e.g., "Personal Site") and a specific file title (e.g., "Headshot Choice").
-export async function getHeroImageByFolderAndTitle(folderName: string, fileTitle: string): Promise<string | null> {
+async function fetchHeroImageByFolderAndTitle(folderName: string, fileTitle: string): Promise<string | null> {
   if (!DIRECTUS_URL) return null;
   try {
     // 1) Resolve folder id by name
@@ -246,3 +247,30 @@ export function getAssetUrl(fileId: string | null | undefined): string | null {
   if (!fileId || !DIRECTUS_URL) return null;
   return `${DIRECTUS_URL}/assets/${fileId}`;
 }
+
+// Cached wrappers (persistent across requests; revalidates on interval)
+
+export const getBlogPosts = nextCache(
+  async () => await fetchBlogPosts(),
+  ['blog:list'],
+  { revalidate: 60, tags: ['blog'] }
+);
+
+export const getBlogPost = nextCache(
+  async (slug: string) => await fetchBlogPost(slug),
+  ['blog:detail'],
+  { revalidate: 60, tags: ['blog'] }
+);
+
+export const getLibraryHeroImage = nextCache(
+  async () => await fetchLibraryHeroImage(),
+  ['library:hero'],
+  { revalidate: 60, tags: ['library'] }
+);
+
+export const getHeroImageByFolderAndTitle = nextCache(
+  async (folderName: string, fileTitle: string) =>
+    await fetchHeroImageByFolderAndTitle(folderName, fileTitle),
+  ['files:lookup'],
+  { revalidate: 300, tags: ['files'] }
+);
