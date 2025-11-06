@@ -1,15 +1,13 @@
 // app/blog/[slug]/BlogContent.tsx
-// SERVER COMPONENT - Remove 'use client'
+// SERVER COMPONENT
 
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, ArrowLeft, Clock, User } from 'lucide-react';
+import { Calendar, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import remarkGfm from 'remark-gfm';
-import rehypeSlug from 'rehype-slug';
 import { BlogAnimation } from './BlogAnimation';
+import { markdownToHtml } from '@/lib/markdown';
 
 export default async function BlogContent({ post }: { post: any }) {
   if (!post) {
@@ -33,9 +31,13 @@ export default async function BlogContent({ post }: { post: any }) {
     );
   }
 
+  // ✅ Convert MARKDOWN → HTML here
+  const html = await markdownToHtml(post.body || "");
+
   return (
     <BlogAnimation>
       <article className="max-w-4xl mx-auto">
+        
         {/* Back Button */}
         <div className="mb-8">
           <Link
@@ -48,31 +50,33 @@ export default async function BlogContent({ post }: { post: any }) {
         </div>
 
         {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+        <header className="mb-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-8">
+          {/* Meta */}
+          <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
               {post.date_published
                 ? format(new Date(post.date_published), 'MMMM dd, yyyy')
                 : 'No date'}
             </div>
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-2" />
-              5 min read
-            </div>
-            <div className="flex items-center">
-              <User className="w-4 h-4 mr-2" />
-              Your Name
-            </div>
-          </div>
 
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            {post.preview}
-          </p>
+            {Array.isArray(post.tags) && post.tags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {post.tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 bg-muted text-muted-foreground rounded-full text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Featured Image */}
@@ -89,39 +93,12 @@ export default async function BlogContent({ post }: { post: any }) {
           </div>
         )}
 
-        {/* Content */}
-        <div className="prose prose-lg max-w-none dark:prose-invert">
-          {post.body ? (
-            <MDXRemote
-              source={post.body}
-              options={{
-                mdxOptions: {
-                  remarkPlugins: [remarkGfm],
-                  rehypePlugins: [rehypeSlug],
-                },
-              }}
-            />
-          ) : (
-            <p>No content available.</p>
-          )}
-        </div>
+        {/* ✅ Actual Markdown-rendered Content */}
+        <div
+          className="prose prose-lg max-w-none dark:prose-invert prose-headings:scroll-mt-20"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
 
-        {/* Tags */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-border">
-            <h3 className="text-lg font-semibold mb-4">Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag: string) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </article>
     </BlogAnimation>
   );
