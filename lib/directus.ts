@@ -1,28 +1,20 @@
-// Directus REST helpers using native fetch to support ISR and tokens
 
-
-// Define the schema for our collections (minimal fields we use)
 export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  preview: string; // short description
-  body: string; // MDX/Markdown
+  preview: string; 
+  body: string; 
   date_published: string;
   status: 'published' | 'draft';
   tags: string[];
   thumbnail?: string | null;
 }
 
-
-
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL;
 const DIRECTUS_TOKEN = process.env.DIRECTUS_STATIC_TOKEN;
 
-// Optional mapping: blog slug -> Directus file id for thumbnail
-export const BLOG_THUMBNAIL_FILE_IDS: Record<string, string> = {"my-preferred-tech-stack-in-2025": "1a90cbf3-aa45-49c6-abc8-3cd748fe436a",};
-
-// Default thumbnail file id (used when a slug doesn't have a specific mapping)
+// Default thumbnail file id (used as fallback when no thumbnail is set)
 export const DEFAULT_BLOG_THUMBNAIL_FILE_ID = 'fafde1a9-aaf3-4412-8f9a-6767b7bc5cbe';
 
 function authHeaders() {
@@ -31,12 +23,35 @@ function authHeaders() {
     : ({} as Record<string, string>);
 }
 
+// Helper to process thumbnail field from Directus
+function processThumbnail(thumbnailField: any): string | null {
+  if (!thumbnailField) {
+    // Use default thumbnail if none provided
+    return getAssetUrl(DEFAULT_BLOG_THUMBNAIL_FILE_ID);
+  }
+
+  // If thumbnail is a file object (with nested data)
+  if (typeof thumbnailField === 'object' && thumbnailField.id) {
+    return getAssetUrl(thumbnailField.id);
+  }
+
+  // If thumbnail is just a file ID string
+  if (typeof thumbnailField === 'string') {
+    // Check if it's already a full URL
+    if (thumbnailField.startsWith('http')) {
+      return thumbnailField;
+    }
+    // Otherwise treat it as a file ID
+    return getAssetUrl(thumbnailField);
+  }
+
+  // Fallback to default
+  return getAssetUrl(DEFAULT_BLOG_THUMBNAIL_FILE_ID);
+}
+
 // Helper functions for fetching data
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
-    // console.log("🔍 Fetching from:", `${DIRECTUS_URL}/items/Blog`);
-    // console.log("🔍 Token present:", !!DIRECTUS_TOKEN);
-
     const params = new URLSearchParams({
       fields: [
         'id',
@@ -51,14 +66,13 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
         'date_updated',
         'keywords',
         'seo_interface',
-        'seo_analyzer'
+        'seo_analyzer',
+        'thumbnail.*' // Fetch thumbnail with all its fields
       ].join(','),
       sort: '-date_published',
       filter: JSON.stringify({ status: { _eq: 'published' } }),
       limit: '50'
     });
-
-    
 
     const res = await fetch(`${DIRECTUS_URL}/items/Blog?${params.toString()}`, {
       headers: {
@@ -69,24 +83,17 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     });
 
     if (!res.ok) {
-      console.error("❌ Directus fetch failed:", res.status, await res.text());
+      console.error(" Directus fetch failed:", res.status, await res.text());
       throw new Error(`Directus error: ${res.status}`);
     }
 
     const data = await res.json();
-    console.log("✅ Directus response:", data);
+    console.log(" Directus response:", data);
 
-    const items: BlogPost[] = (data?.data || []).map((p: any) => {
-      const mappedId = BLOG_THUMBNAIL_FILE_IDS[p.slug] || DEFAULT_BLOG_THUMBNAIL_FILE_ID;
-      const mappedUrl = mappedId ? getAssetUrl(mappedId) : null;
-      const apiUrl = p?.thumbnail
-        ? (p.thumbnail.startsWith('http') ? p.thumbnail : `${DIRECTUS_URL}/assets/${p.thumbnail}`)
-        : null;
-      return {
-        ...p,
-        thumbnail: mappedUrl || apiUrl,
-      } as BlogPost;
-    });
+    const items: BlogPost[] = (data?.data || []).map((p: any) => ({
+      ...p,
+      thumbnail: processThumbnail(p.thumbnail),
+    }));
 
     return items;
   } catch (error) {
@@ -96,7 +103,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 export async function getBlogPost(slug: string) {
-  const url = `${DIRECTUS_URL}/items/Blog?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,tags.*`;
+  const url = `${DIRECTUS_URL}/items/Blog?filter[slug][_eq]=${encodeURIComponent(slug)}&fields=*,tags.*,thumbnail.*`;
 
   try {
     const headers: Record<string, string> = {
@@ -114,30 +121,28 @@ export async function getBlogPost(slug: string) {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error(`❌ Directus fetch failed: ${res.status} - ${errorText}`);
+      console.error(` Directus fetch failed: ${res.status} - ${errorText}`);
       throw new Error(`Directus error: ${res.status}`);
     }
 
     const data = await res.json();
 
     if (!data?.data?.length) {
-      console.warn("⚠️ No blog post found for slug:", slug);
+      console.warn(" No blog post found for slug:", slug);
       return null;
     }
 
     const post = data.data[0];
-    // Attach thumbnail for individual blog pages using mapping/default if available
-    const mappedId = BLOG_THUMBNAIL_FILE_IDS[slug] || DEFAULT_BLOG_THUMBNAIL_FILE_ID;
-    const mappedUrl = mappedId ? getAssetUrl(mappedId) : null;
-    const apiUrl = post?.thumbnail
-      ? (post.thumbnail.startsWith("http") ? post.thumbnail : `${DIRECTUS_URL}/assets/${post.thumbnail}`)
-      : null;
-    return { ...post, thumbnail: mappedUrl || apiUrl };
+    return {
+      ...post,
+      thumbnail: processThumbnail(post.thumbnail),
+    };
   } catch (error) {
-    console.error("💥 Error fetching single blog post:", error);
+    console.error(" Error fetching single blog post:", error);
     return null;
   }
 }
+
 // Fetch a hero image from the `library` collection in Directus.
 // It tries common field names that might store a file id.
 export async function getLibraryHeroImage(): Promise<string | null> {
@@ -156,7 +161,7 @@ export async function getLibraryHeroImage(): Promise<string | null> {
       next: { revalidate: 60 },
     });
     if (!res.ok) {
-      console.error('❌ Directus library fetch failed:', res.status, await res.text());
+      console.error(' Directus library fetch failed:', res.status, await res.text());
       return null;
     }
     const data = await res.json();
@@ -191,7 +196,7 @@ export async function getHeroImageByFolderAndTitle(folderName: string, fileTitle
       }
     );
     if (!folderRes.ok) {
-      console.error('❌ Directus folder fetch failed:', folderRes.status, await folderRes.text());
+      console.error(' Directus folder fetch failed:', folderRes.status, await folderRes.text());
       return null;
     }
     const folderData = await folderRes.json();
@@ -203,8 +208,6 @@ export async function getHeroImageByFolderAndTitle(folderName: string, fileTitle
       new URLSearchParams({
         limit: '1',
         fields: 'id,title,filename_download,folder',
-        // We use a logical OR: title equals OR filename_download equals
-        // Directus filter for OR: { _or: [ {title: {_eq: fileTitle}}, {filename_download: {_eq: fileTitle}} ] }
         filter: JSON.stringify({
           _and: [
             { folder: { _eq: folderId } },
@@ -224,7 +227,7 @@ export async function getHeroImageByFolderAndTitle(folderName: string, fileTitle
       next: { revalidate: 60 },
     });
     if (!fileRes.ok) {
-      console.error('❌ Directus file fetch failed:', fileRes.status, await fileRes.text());
+      console.error(' Directus file fetch failed:', fileRes.status, await fileRes.text());
       return null;
     }
     const fileData = await fileRes.json();
