@@ -3,6 +3,14 @@ import BlogContent from './BlogContent';
 import { notFound } from 'next/navigation';
 import BlogGrid from '@/components/BlogGrid';
 
+export const dynamic = "force-static";
+
+// ✅ Pre-build all blog pages
+export async function generateStaticParams() {
+  const posts = await getBlogPosts();
+  return posts.map((p) => ({ slug: p.slug }));
+}
+
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getBlogPost(params.slug);
   const allPosts = await getBlogPosts();

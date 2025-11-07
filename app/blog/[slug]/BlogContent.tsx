@@ -1,4 +1,3 @@
-// app/blog/[slug]/BlogContent.tsx
 // SERVER COMPONENT
 
 import Link from 'next/link';
@@ -7,7 +6,7 @@ import { Calendar, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { BlogAnimation } from './BlogAnimation';
-import { markdownToHtml } from '@/lib/markdown';
+import { RenderMDX } from "@/lib/mdx";
 
 export default async function BlogContent({ post }: { post: any }) {
   if (!post) {
@@ -31,14 +30,11 @@ export default async function BlogContent({ post }: { post: any }) {
     );
   }
 
-  // ✅ Convert MARKDOWN → HTML here
-  const html = await markdownToHtml(post.body || "");
-
   return (
     <BlogAnimation>
       <article className="max-w-4xl mx-auto">
-        
-        {/* Back Button */}
+
+        {/* Back */}
         <div className="mb-8">
           <Link
             href="/blog"
@@ -55,7 +51,6 @@ export default async function BlogContent({ post }: { post: any }) {
             {post.title}
           </h1>
 
-          {/* Meta */}
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
@@ -79,7 +74,7 @@ export default async function BlogContent({ post }: { post: any }) {
           </div>
         </header>
 
-        {/* Featured Image */}
+        {/* Thumbnail */}
         {post.thumbnail && (
           <div className="mb-12">
             <div className="relative h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden">
@@ -93,11 +88,10 @@ export default async function BlogContent({ post }: { post: any }) {
           </div>
         )}
 
-        {/* ✅ Actual Markdown-rendered Content */}
-        <div
-          className="prose prose-lg max-w-none dark:prose-invert prose-headings:scroll-mt-20"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        {/* ✅ MDX Rendering */}
+        <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:scroll-mt-20">
+          <RenderMDX source={post.body || ""} />
+        </div>
 
       </article>
     </BlogAnimation>
