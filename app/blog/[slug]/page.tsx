@@ -3,18 +3,14 @@ import BlogContent from './BlogContent';
 import { notFound } from 'next/navigation';
 import BlogGrid from '@/components/BlogGrid';
 
-export const dynamic = "force-static";
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
+  // ✅ Unwrap the params promise FIRST
+  const { slug } = await props.params;
 
-// ✅ Pre-build all blog pages
-export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  return posts.map((p) => ({ slug: p.slug }));
-}
-
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug);
+  // ✅ Now use slug safely
+  const post = await getBlogPost(slug);
   const allPosts = await getBlogPosts();
-  const related = allPosts.filter(p => p.slug !== params.slug).slice(0, 2);
+  const related = allPosts.filter((p) => p.slug !== slug).slice(0, 2);
 
   if (!post) {
     notFound();

@@ -36,38 +36,42 @@ export default function Hero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-6 md:space-y-8 flex flex-col justify-center"
           >
-            <div className="space-y-3 md:space-y-4">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight"
-              >
-                Hi, I'm {name}
-              </motion.h1>
-              
-              {title && (
-                <motion.h2
+            <div className="space-y-6 md:space-y-8 flex flex-col justify-center">
+              <div className="space-y-3 md:space-y-4">
+                <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-muted-foreground"
+                  transition={{ duration: 0.6, delay: 0.1 }}
                 >
-                  {title}
-                </motion.h2>
-              )}
-            </div>
+                  <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight">
+                    Hi, I'm {name}
+                  </span>
+                </motion.h1>
+                
+                {title && (
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                  >
+                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-muted-foreground">
+                      {title}
+                    </span>
+                  </motion.h2>
+                )}
+              </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed"
-            >
-              {description}
-            </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <span className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                  {description}
+                </span>
+              </motion.p>
+            </div>
           </motion.div>
 
           {/* Visual Element */}
@@ -75,15 +79,16 @@ export default function Hero({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full flex items-center justify-center"
           >
-            {imageUrl ? (
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-border">
-                <Image src={imageUrl} alt={name} fill className="object-cover" />
-              </div>
-            ) : (
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-dashed border-border bg-muted/20" />
-            )}
+            <div className="w-full flex items-center justify-center">
+              {imageUrl ? (
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-border">
+                  <Image src={imageUrl} alt={name} fill className="object-cover" />
+                </div>
+              ) : (
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-dashed border-border bg-muted/20" />
+              )}
+            </div>
           </motion.div>
         </div>
       </div>

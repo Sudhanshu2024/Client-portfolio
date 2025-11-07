@@ -39,12 +39,13 @@ export default function BlogGrid({
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl font-semibold mb-2">{title}</h2>
-          {subtitle && (
-            <p className="text-base text-muted-foreground">{subtitle}</p>
-          )}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-semibold mb-2">{title}</h2>
+            {subtitle && (
+              <p className="text-base text-muted-foreground">{subtitle}</p>
+            )}
+          </div>
         </motion.div>
 
         <div className={`grid ${columnsClass} gap-8 items-stretch`}>
@@ -55,9 +56,8 @@ export default function BlogGrid({
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group h-full"
             >
-              <Link href={`/blog/${post.slug}`}>
+              <Link href={`/blog/${post.slug}`} className="group h-full block">
                 <div className="card-hover bg-card rounded-xl overflow-hidden border border-border h-full flex flex-col min-h-[320px]">
                   {/* Image */}
                   <div className="relative h-48 overflow-hidden">
@@ -92,11 +92,12 @@ export default function BlogGrid({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             viewport={{ once: true }}
-            className="text-center mt-10"
           >
-            <Link href={viewAllHref} className="inline-flex items-center text-foreground hover:opacity-80">
-              {viewAllText}
-            </Link>
+            <div className="text-center mt-10">
+              <Link href={viewAllHref} className="inline-flex items-center text-foreground hover:opacity-80">
+                {viewAllText}
+              </Link>
+            </div>
           </motion.div>
         )}
       </div>

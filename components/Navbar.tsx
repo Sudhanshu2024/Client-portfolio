@@ -96,9 +96,8 @@ export default function Navbar() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border"
             >
-              <div className="py-4 space-y-4">
+              <div className="md:hidden border-t border-border py-4 space-y-4">
                 {/* Theme toggle */}
                 <div className="px-3">
                   <button
