@@ -9,6 +9,10 @@ const nextConfig = {
         pathname: '/assets/**',
       },
       {
+        protocol: "https",
+        hostname: "cms.parthkoshti.com",
+      },
+      {
         protocol: 'https',
         hostname: '**.directus.app',
         pathname: '/assets/**',
