@@ -41,7 +41,7 @@ export default function HirePage() {
           </div>
         </section>
       </main>
-      <Footer />
+      
     </div>
   );
 }

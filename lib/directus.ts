@@ -274,3 +274,18 @@ export const getHeroImageByFolderAndTitle = nextCache(
   ['files:lookup'],
   { revalidate: 300, tags: ['files'] }
 );
+
+// ---------------------------------------------
+// Polaroid Gallery (static ids configurable here)
+// Update these three ids to change the photos used by the
+// rotated polaroid gallery component.
+export const POLAROID_PHOTO_FILE_IDS: string[] = [
+  // Replace with your Directus file ids
+  '772f67b8-343d-45b2-8d5a-501299d87560',
+  '6dfbaaf5-5905-4a2a-8170-a3b296257d73',
+  '43f94912-c21a-4ac5-97cf-dfa19036ba04',
+];
+
+export function getPolaroidPhotoIds(): string[] {
+  return POLAROID_PHOTO_FILE_IDS.filter(Boolean);
+}

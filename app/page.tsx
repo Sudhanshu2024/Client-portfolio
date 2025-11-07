@@ -1,7 +1,5 @@
 import { Suspense } from 'react';
-import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import Footer from '@/components/Footer';
 import { getBlogPosts, getAssetUrl } from '@/lib/directus';
 import HomeIntro from '@/components/HomeIntro';
 import BlogList from '@/components/blog/List';
@@ -29,13 +27,11 @@ export default async function HomePage() {
   const heroImage = getAssetUrl('1a90cbf3-aa45-49c6-abc8-3cd748fe436a');
   return (
     <div className="min-h-screen">
-      <Navbar />
-      
       <main>
         <Hero 
-          name="Your Name"
-          title="Full Stack Developer"
-          description="I create beautiful, functional, and user-centered digital experiences that bring ideas to life."
+          name="Parth Koshti"
+          title=""
+          description="Welcome to my Personal space on the Internet."
           ctaText="Read the Blog"
           ctaLink="/blog"
           secondaryCtaText="Hire Me"
@@ -74,8 +70,6 @@ export default async function HomePage() {
           <BlogSection />
         </Suspense>
       </main>
-      
-      <Footer />
     </div>
   );
 }

@@ -18,9 +18,9 @@ interface HeroProps {
 }
 
 export default function Hero({
-  name = "Your Name",
-  title = "Full Stack Developer",
-  description = "I create beautiful, functional, and user-centered digital experiences that bring ideas to life.",
+  name = "Parth Koshti",
+  title = "",
+  description = "Welcome to my Personal space on the Internet.",
   ctaText = "View Projects",
   ctaLink = "/projects",
   secondaryCtaText = "Download CV",
@@ -48,14 +48,16 @@ export default function Hero({
                 Hi, I'm {name}
               </motion.h1>
               
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-muted-foreground"
-              >
-                {title}
-              </motion.h2>
+              {title && (
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-muted-foreground"
+                >
+                  {title}
+                </motion.h2>
+              )}
             </div>
 
             <motion.p
@@ -66,35 +68,6 @@ export default function Hero({
             >
               {description}
             </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
-            >
-              <Link
-                href={ctaLink}
-                className={cn(
-                  "inline-flex items-center justify-center px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-md font-medium transition-colors text-sm sm:text-base",
-                  "border border-border bg-background text-foreground hover:bg-accent"
-                )}
-              >
-                {ctaText}
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-              
-              <Link
-                href={secondaryCtaLink}
-                className={cn(
-                  "inline-flex items-center justify-center px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-md font-medium transition-colors text-sm sm:text-base",
-                  "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                )}
-              >
-                <Download className="mr-2 w-4 h-4" />
-                {secondaryCtaText}
-              </Link>
-            </motion.div>
           </motion.div>
 
           {/* Visual Element */}

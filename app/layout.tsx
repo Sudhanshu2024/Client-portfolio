@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Poppins, Raleway } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import Newsletter from '@/components/Newsletter';
 
 // Move font declarations here - at module scope
 const poppins = Poppins({
@@ -46,7 +49,12 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${poppins.variable} ${raleway.variable} antialiased font-sans`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <Navbar />
+          <main className="pt-16">
+            {children}
+          </main>
+          <Newsletter />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

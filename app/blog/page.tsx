@@ -3,8 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, ArrowLeft, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { getBlogPosts } from '@/lib/directus';
 import BlogTagFilter from '@/components/blog/TagFilter';
 import { cn } from '@/lib/utils';
@@ -88,8 +86,6 @@ export default function BlogPage({ searchParams }: { searchParams?: { tag?: stri
   const selectedTag = searchParams?.tag;
   return (
     <div className="min-h-screen">
-      <Navbar />
-      
       <main>
         {/* Hero Section */}
         <section className="pt-24 pb-16 bg-gradient-to-br from-background via-background to-accent/20">
@@ -136,7 +132,7 @@ export default function BlogPage({ searchParams }: { searchParams?: { tag?: stri
         </section>
 
         {/* Newsletter Section */}
-        <section className="section-padding bg-background">
+        {/* <section className="section-padding bg-background">
           <div className="container">
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold mb-6">
@@ -164,10 +160,8 @@ export default function BlogPage({ searchParams }: { searchParams?: { tag?: stri
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
-      
-      <Footer />
     </div>
   );
 }

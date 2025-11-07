@@ -64,7 +64,7 @@ export default function Navbar() {
             >
               {theme === 'dark' ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
             </button>
-
+{/* 
             {socialLinks.map((item) => (
               <a
                 key={item.name}
@@ -76,7 +76,7 @@ export default function Navbar() {
               >
                 <item.icon className="w-5 h-5" />
               </a>
-            ))}
+            ))} */}
           </div>
 
           {/* Mobile menu button */}
