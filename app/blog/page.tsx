@@ -28,9 +28,9 @@ async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {filteredPosts.map((post) => (
-        <article key={post.id} className="group">
+        <article key={post.id} className="group h-full">
           <Link href={`/blog/${post.slug}`}>
-            <div className="card-hover bg-card rounded-xl overflow-hidden shadow-md border border-border">
+            <div className="card-hover flex h-full flex-col bg-card rounded-xl overflow-hidden shadow-md border border-border">
               {/* Image */}
               {post.thumbnail && (
                 <div className="relative h-48 overflow-hidden">
@@ -45,7 +45,7 @@ async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
               )}
 
               {/* Content */}
-              <div className="p-6">
+              <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-center text-sm text-muted-foreground mb-3">
                   <Calendar className="w-4 h-4 mr-2" />
                   {format(new Date(post.date_published), 'MMM dd, yyyy')}
@@ -55,9 +55,9 @@ async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
                   {post.title}
                 </h3>
                 
-                <p className="text-muted-foreground mb-4 line-clamp-3">{post.preview}</p>
+                <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">{post.preview}</p>
                 
-                <div className="flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform">
+                <div className="flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform mt-auto">
                   Read More
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </div>

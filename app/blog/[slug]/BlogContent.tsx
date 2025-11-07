@@ -32,7 +32,7 @@ export default async function BlogContent({ post }: { post: any }) {
 
   return (
     <BlogAnimation>
-      <article className="max-w-4xl mx-auto">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-0">
 
         {/* Back */}
         <div className="mb-8">
