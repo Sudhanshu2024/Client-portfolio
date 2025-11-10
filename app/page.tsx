@@ -5,6 +5,9 @@ import HomeIntro from '@/components/HomeIntro';
 import BlogList from '@/components/blog/List';
 import BlogGrid from '@/components/BlogGrid';
 
+// ISR: Revalidate every 60 seconds for fresh blog content
+export const revalidate = 60;
+
 async function BlogSection() {
   const posts = (await getBlogPosts()).slice(0, 4);
   return (

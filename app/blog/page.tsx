@@ -7,6 +7,11 @@ import { getBlogPosts } from '@/lib/directus';
 import BlogTagFilter from '@/components/blog/TagFilter';
 import { cn } from '@/lib/utils';
 
+// ISR: Blog content changes periodically, revalidate every 60 seconds
+// Note: This page uses searchParams for filtering, so it must remain dynamic
+// but the base content is ISR cached
+export const revalidate = 60;
+
 const FALLBACK_BLOG_POSTS: any[] = [];
 
 async function BlogGrid({ selectedTag }: { selectedTag?: string }) {

@@ -2,7 +2,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { cn } from '@/lib/utils';
 
-export const revalidate = 60;
+// SSG: Pure static content, no user data or dynamic content
+export const dynamic = "force-static";
+export const revalidate = false;
 
 export default function HirePage() {
   return (
