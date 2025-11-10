@@ -82,8 +82,9 @@ async function BlogTagBar() {
   );
 }
 
-export default function BlogPage({ searchParams }: { searchParams?: { tag?: string } }) {
-  const selectedTag = searchParams?.tag;
+export default async function BlogPage({ searchParams }: { searchParams?: Promise<{ tag?: string }> }) {
+  const params = await searchParams;
+  const selectedTag = params?.tag;
   return (
     <div className="min-h-screen">
       <main>
