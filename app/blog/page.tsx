@@ -7,10 +7,10 @@ import { getBlogPosts } from '@/lib/directus';
 import BlogTagFilter from '@/components/blog/TagFilter';
 import { cn } from '@/lib/utils';
 
-// ISR: Blog content changes periodically, revalidate every 60 seconds
+// ISR: Using on-demand revalidation instead of time-based revalidation
+// Revalidate via POST to /api/revalidate-articles when blog content changes
+// Reference: https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath
 // Note: This page uses searchParams for filtering, so it must remain dynamic
-// but the base content is ISR cached
-export const revalidate = 60;
 
 const FALLBACK_BLOG_POSTS: any[] = [];
 
@@ -19,72 +19,121 @@ async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
   
   try {
     const directusPosts = await getBlogPosts();
-    if (directusPosts.length > 0) {
+    if (Array.isArray(directusPosts) && directusPosts.length > 0) {
       blogPosts = directusPosts;
     }
   } catch (error) {
     console.log('Using fallback blog posts');
   }
 
+  // Ensure blogPosts is always an array
+  if (!Array.isArray(blogPosts)) {
+    blogPosts = [];
+  }
+
   const filteredPosts = selectedTag && selectedTag !== 'all'
-    ? blogPosts.filter((p: any) => Array.isArray(p.tags) && p.tags.includes(selectedTag))
+    ? blogPosts.filter((p: any) => p && Array.isArray(p.tags) && p.tags.includes(selectedTag))
     : blogPosts;
+
+  // Handle empty results
+  if (filteredPosts.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-lg text-muted-foreground">
+          {selectedTag && selectedTag !== 'all' 
+            ? `No blog posts found with the tag "${selectedTag}".` 
+            : 'No blog posts available at the moment.'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {filteredPosts.map((post) => (
-        <article key={post.id} className="group h-full">
-          <Link href={`/blog/${post.slug}`}>
-            <div className="card-hover flex h-full flex-col bg-card rounded-xl overflow-hidden shadow-md border border-border">
-              {/* Image */}
-              {post.thumbnail && (
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={post.thumbnail}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                </div>
-              )}
+      {filteredPosts.map((post) => {
+        if (!post || !post.id || !post.slug || !post.title) {
+          return null;
+        }
+        
+        return (
+          <article key={post.id} className="group h-full">
+            <Link href={`/blog/${post.slug}`}>
+              <div className="card-hover flex h-full flex-col bg-card rounded-xl overflow-hidden shadow-md border border-border">
+                {/* Image */}
+                {post.thumbnail && (
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={post.thumbnail}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                )}
 
-              {/* Content */}
-              <div className="flex flex-1 flex-col p-6">
-                <div className="flex items-center text-sm text-muted-foreground mb-3">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {format(new Date(post.date_published), 'MMM dd, yyyy')}
-                </div>
-                
-                <h3 className="text-xl font-semibold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                
-                <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">{post.preview}</p>
-                
-                <div className="flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform mt-auto">
-                  Read More
-                  <ArrowRight className="ml-2 w-4 h-4" />
+                {/* Content */}
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex items-center text-sm text-muted-foreground mb-3">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {post.date_published ? format(new Date(post.date_published), 'MMM dd, yyyy') : ''}
+                  </div>
+                  
+                  <h2 className="text-xl font-semibold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h2>
+                  
+                  <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">{post.preview || ''}</p>
+                  
+                  <div className="flex items-center text-primary font-medium group-hover:translate-x-1 transition-transform mt-auto">
+                    Read More
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        </article>
-      ))}
+            </Link>
+          </article>
+        );
+      })}
     </div>
   );
 }
 
 async function BlogTagBar() {
-  const posts = await getBlogPosts();
-  const tags = Array.from(new Set(posts.flatMap((p: any) => Array.isArray(p.tags) ? p.tags : []))).sort();
-  return (
-    <section className="bg-background pt-4 pb-8">
-      <div className="container">
-        <BlogTagFilter tags={tags} />
-      </div>
-    </section>
-  );
+  try {
+    const posts = await getBlogPosts();
+    // Handle null/undefined/empty responses
+    if (!Array.isArray(posts) || posts.length === 0) {
+      return (
+        <section className="bg-background pt-4 pb-8">
+          <div className="container">
+            <BlogTagFilter tags={[]} />
+          </div>
+        </section>
+      );
+    }
+    
+    const tags = Array.from(
+      new Set(posts.flatMap((p: any) => (p && Array.isArray(p.tags)) ? p.tags : []))
+    ).sort();
+    
+    return (
+      <section className="bg-background pt-4 pb-8">
+        <div className="container">
+          <BlogTagFilter tags={tags} />
+        </div>
+      </section>
+    );
+  } catch (error) {
+    console.error('Error loading blog tags:', error);
+    return (
+      <section className="bg-background pt-4 pb-8">
+        <div className="container">
+          <BlogTagFilter tags={[]} />
+        </div>
+      </section>
+    );
+  }
 }
 
 export default async function BlogPage({ searchParams }: { searchParams?: Promise<{ tag?: string }> }) {

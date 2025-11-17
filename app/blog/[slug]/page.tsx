@@ -3,8 +3,9 @@ import BlogContent from './BlogContent';
 import { notFound } from 'next/navigation';
 import BlogGrid from '@/components/BlogGrid';
 
-// ISR: Blog posts change periodically, revalidate every 60 seconds
-export const revalidate = 60;
+// ISR: Using on-demand revalidation instead of time-based revalidation
+// Revalidate via POST to /api/revalidate-articles when blog content changes
+// Reference: https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath
 
 // Force static generation for all blog post slugs
 export const dynamic = "force-static";
