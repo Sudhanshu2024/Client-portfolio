@@ -6,11 +6,34 @@ import { format } from 'date-fns';
 import { getBlogPosts } from '@/lib/directus';
 import BlogTagFilter from '@/components/blog/TagFilter';
 import { cn } from '@/lib/utils';
+import type { Metadata } from 'next';
 
-// ISR: Using on-demand revalidation instead of time-based revalidation
-// Revalidate via POST to /api/revalidate-articles when blog content changes
-// Reference: https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath
-// Note: This page uses searchParams for filtering, so it must remain dynamic
+
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+
+export const metadata: Metadata = {
+  title: `Blog | ${siteName}`,
+  description: 'Thoughts, tutorials, and insights about web development, design, and technology. Join me on my journey of continuous learning and sharing knowledge.',
+  keywords: ['blog', 'web development', 'tutorials', 'technology', 'programming', 'design'],
+  openGraph: {
+    title: `Blog | ${siteName}`,
+    description: 'Thoughts, tutorials, and insights about web development, design, and technology.',
+    url: `${baseUrl}/blog`,
+    siteName: siteName,
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Blog | ${siteName}`,
+    description: 'Thoughts, tutorials, and insights about web development, design, and technology.',
+  },
+  alternates: {
+    canonical: `${baseUrl}/blog`,
+  },
+};
 
 const FALLBACK_BLOG_POSTS: any[] = [];
 
@@ -102,7 +125,7 @@ async function BlogGrid({ selectedTag }: { selectedTag?: string }) {
 async function BlogTagBar() {
   try {
     const posts = await getBlogPosts();
-    // Handle null/undefined/empty responses
+    
     if (!Array.isArray(posts) || posts.length === 0) {
       return (
         <section className="bg-background pt-4 pb-8">

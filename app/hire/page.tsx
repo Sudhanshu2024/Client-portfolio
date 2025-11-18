@@ -1,10 +1,36 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { cn } from '@/lib/utils';
+import type { Metadata } from 'next';
 
-// SSG: Pure static content, no user data or dynamic content
+
 export const dynamic = "force-static";
 export const revalidate = false;
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+
+export const metadata: Metadata = {
+  title: `Hire Me | ${siteName}`,
+  description: 'Available for freelance work, consulting, and long-term engagements. Get in touch to discuss your project.',
+  keywords: ['hire', 'freelance', 'consulting', 'web development', 'developer', 'contract work'],
+  openGraph: {
+    title: `Hire Me | ${siteName}`,
+    description: 'Available for freelance work, consulting, and long-term engagements. Get in touch to discuss your project.',
+    url: `${baseUrl}/hire`,
+    siteName: siteName,
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary',
+    title: `Hire Me | ${siteName}`,
+    description: 'Available for freelance work, consulting, and long-term engagements. Get in touch to discuss your project.',
+  },
+  alternates: {
+    canonical: `${baseUrl}/hire`,
+  },
+};
 
 export default function HirePage() {
   return (

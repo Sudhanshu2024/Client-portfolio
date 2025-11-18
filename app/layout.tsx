@@ -19,24 +19,35 @@ const raleway = Raleway({
   variable: '--font-sans'
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts';
+
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio',
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts',
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: siteName,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
   keywords: ['portfolio', 'web development', 'nextjs', 'react', 'typescript'],
-  authors: [{ name: 'Your Name' }],
-  creator: 'Your Name',
+  authors: [{ name: 'Parth Koshti' }],
+  creator: 'Parth Koshti',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://your-portfolio.vercel.app',
-    title: process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio',
-    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts',
-    siteName: process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio',
+    url: baseUrl,
+    title: siteName,
+    description: siteDescription,
+    siteName: siteName,
   },
   twitter: {
     card: 'summary_large_image',
-    title: process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio',
-    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts',
+    title: siteName,
+    description: siteDescription,
+  },
+  alternates: {
+    canonical: baseUrl,
   },
 };
 

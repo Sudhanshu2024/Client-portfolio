@@ -2,12 +2,84 @@ import { getBlogPost, getBlogPosts } from '@/lib/directus';
 import BlogContent from './BlogContent';
 import { notFound } from 'next/navigation';
 import BlogGrid from '@/components/BlogGrid';
+import type { Metadata } from 'next';
 
-// ISR: Using on-demand revalidation instead of time-based revalidation
-// Revalidate via POST to /api/revalidate-articles when blog content changes
-// Reference: https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath
 
-// Force static generation for all blog post slugs
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+
+
+export async function generateMetadata(
+  props: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await props.params;
+  const post = await getBlogPost(slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  const description = post.preview || `Read ${post.title} on ${siteName}`;
+  
+ 
+  const keywords = Array.isArray(post.tags) && post.tags.length > 0
+    ? post.tags
+    : ['blog', 'web development', 'technology'];
+
+  
+  const postUrl = `${baseUrl}/blog/${post.slug}`;
+
+
+  const publishedTime = post.date_published 
+    ? new Date(post.date_published).toISOString()
+    : undefined;
+
+  return {
+    title: `${post.title} | ${siteName}`,
+    description: description,
+    keywords: keywords,
+    authors: [{ name: siteName }],
+    openGraph: {
+      title: post.title,
+      description: description,
+      url: postUrl,
+      siteName: siteName,
+      type: 'article',
+      locale: 'en_US',
+      publishedTime: publishedTime,
+      images: post.thumbnail ? [
+        {
+          url: post.thumbnail,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: description,
+      images: post.thumbnail ? [post.thumbnail] : undefined,
+    },
+    alternates: {
+      canonical: postUrl,
+    },
+    // Article-specific metadata
+    other: {
+      'article:published_time': publishedTime || '',
+      'article:author': siteName,
+      ...(Array.isArray(post.tags) && post.tags.length > 0 && {
+        'article:tag': post.tags.join(', '),
+      }),
+    },
+  };
+}
+
+
 export const dynamic = "force-static";
 
 // Pre-generate all blog post pages at build time
@@ -19,10 +91,10 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
-  // ✅ Unwrap the params promise FIRST
+ 
   const { slug } = await props.params;
 
-  // ✅ Now use slug safely
+
   const post = await getBlogPost(slug);
   const allPosts = await getBlogPosts();
   const related = allPosts.filter((p) => p.slug !== slug).slice(0, 2);

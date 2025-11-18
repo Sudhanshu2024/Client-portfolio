@@ -15,7 +15,7 @@ export interface BlogPost {
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL;
 const DIRECTUS_TOKEN = process.env.DIRECTUS_STATIC_TOKEN;
 
-// Default thumbnail file id (used as fallback when no thumbnail is set)
+
 export const DEFAULT_BLOG_THUMBNAIL_FILE_ID = 'fafde1a9-aaf3-4412-8f9a-6767b7bc5cbe';
 
 function authHeaders() {
@@ -24,33 +24,33 @@ function authHeaders() {
     : ({} as Record<string, string>);
 }
 
-// Helper to process thumbnail field from Directus
+
 function processThumbnail(thumbnailField: any): string | null {
   if (!thumbnailField) {
-    // Use default thumbnail if none provided
+   
     return getAssetUrl(DEFAULT_BLOG_THUMBNAIL_FILE_ID);
   }
 
-  // If thumbnail is a file object (with nested data)
+  
   if (typeof thumbnailField === 'object' && thumbnailField.id) {
     return getAssetUrl(thumbnailField.id);
   }
 
-  // If thumbnail is just a file ID string
+  
   if (typeof thumbnailField === 'string') {
-    // Check if it's already a full URL
+
     if (thumbnailField.startsWith('http')) {
       return thumbnailField;
     }
-    // Otherwise treat it as a file ID
+   
     return getAssetUrl(thumbnailField);
   }
 
-  // Fallback to default
+  
   return getAssetUrl(DEFAULT_BLOG_THUMBNAIL_FILE_ID);
 }
 
-// Helper functions for fetching data
+
 async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
     const params = new URLSearchParams({
@@ -144,8 +144,7 @@ async function fetchBlogPost(slug: string) {
   }
 }
 
-// Fetch a hero image from the `library` collection in Directus.
-// It tries common field names that might store a file id.
+
 async function fetchLibraryHeroImage(): Promise<string | null> {
   if (!DIRECTUS_URL) return null;
   try {
@@ -180,12 +179,11 @@ async function fetchLibraryHeroImage(): Promise<string | null> {
   }
 }
 
-// Fetch a file from Directus `/files` by folder name and file title.
-// This is useful when you know the folder (e.g., "Personal Site") and a specific file title (e.g., "Headshot Choice").
+
 async function fetchHeroImageByFolderAndTitle(folderName: string, fileTitle: string): Promise<string | null> {
   if (!DIRECTUS_URL) return null;
   try {
-    // 1) Resolve folder id by name
+    
     const folderRes = await fetch(
       `${DIRECTUS_URL}/folders?filter[name][_eq]=${encodeURIComponent(folderName)}&limit=1`,
       {
@@ -242,13 +240,13 @@ async function fetchHeroImageByFolderAndTitle(folderName: string, fileTitle: str
   }
 }
 
-// If you already know a Directus file id, build the public asset URL
+
 export function getAssetUrl(fileId: string | null | undefined): string | null {
   if (!fileId || !DIRECTUS_URL) return null;
   return `${DIRECTUS_URL}/assets/${fileId}`;
 }
 
-// Cached wrappers (persistent across requests; revalidates on interval)
+
 
 export const getBlogPosts = nextCache(
   async () => await fetchBlogPosts(),
@@ -275,10 +273,7 @@ export const getHeroImageByFolderAndTitle = nextCache(
   { revalidate: 300, tags: ['files'] }
 );
 
-// ---------------------------------------------
-// Polaroid Gallery (static ids configurable here)
-// Update these three ids to change the photos used by the
-// rotated polaroid gallery component.
+
 export const POLAROID_PHOTO_FILE_IDS: string[] = [
   // Replace with your Directus file ids
   '772f67b8-343d-45b2-8d5a-501299d87560',

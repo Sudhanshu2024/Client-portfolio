@@ -4,9 +4,38 @@ import { getBlogPosts, getAssetUrl } from '@/lib/directus';
 import HomeIntro from '@/components/HomeIntro';
 import BlogList from '@/components/blog/List';
 import BlogGrid from '@/components/BlogGrid';
+import type { Metadata } from 'next';
 
-// ISR: Revalidate every 60 seconds for fresh blog content
+
 export const revalidate = 60;
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts';
+
+export const metadata: Metadata = {
+  title: siteName,
+  description: siteDescription,
+  keywords: ['portfolio', 'web development', 'nextjs', 'react', 'typescript', 'developer', 'programming'],
+  authors: [{ name: 'Parth Koshti' }],
+  creator: 'Parth Koshti',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: baseUrl,
+    title: siteName,
+    description: siteDescription,
+    siteName: siteName,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteName,
+    description: siteDescription,
+  },
+  alternates: {
+    canonical: baseUrl,
+  },
+};
 
 async function BlogSection() {
   const posts = (await getBlogPosts()).slice(0, 4);
