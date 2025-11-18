@@ -76,9 +76,14 @@ export default function BlogGrid({
                       <Calendar className="w-4 h-4 mr-2" />
                       {format(new Date(post.date_published), 'MMM dd, yyyy')}
                     </div>
-                    <h3 className="text-xl font-semibold mb-0 line-clamp-2 group-hover:text-foreground transition-colors">
+                    <h3 className="text-xl font-semibold mb-3 line-clamp-2 group-hover:text-foreground transition-colors">
                       {post.title}
                     </h3>
+                    {post.preview && (
+                      <p className="text-muted-foreground line-clamp-3 flex-1">
+                        {post.preview}
+                      </p>
+                    )}
                   </div>
                 </div>
               </Link>
