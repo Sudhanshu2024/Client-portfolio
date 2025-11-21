@@ -1,5 +1,3 @@
-// SERVER COMPONENT
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, ArrowLeft } from 'lucide-react';
@@ -11,15 +9,12 @@ import { RenderMDX } from "@/lib/mdx";
 // Sanitize content to prevent MDX parsing errors
 function sanitizeContent(content: string): string {
   if (!content) return '';
-  
+
   // Replace problematic patterns that break MDX
   return content
-    // Escape standalone < and > that aren't part of HTML tags
-    .replace(/\s<(\d+)/g, ' &lt;$1')  // <30 -> &lt;30
-    .replace(/(\d+)>\s/g, '$1&gt; ')  // 30> -> 30&gt;
-    // Preserve actual HTML/JSX tags
+    .replace(/\s<(\d+)/g, ' &lt;$1')
+    .replace(/(\d+)>\s/g, '$1&gt; ')
     .replace(/<(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '<$1')
-    // Fix unclosed brackets in links
     .replace(/\[([^\]]+)$/gm, '\\[$1')
     .replace(/^([^\[]+)\]/gm, '$1\\]');
 }
@@ -53,7 +48,7 @@ export default async function BlogContent({ post }: { post: any }) {
       <article className="min-h-screen py-12 sm:py-16 md:py-20">
         {/* Narrow content container */}
         <div className="max-w-2xl mx-auto px-6 sm:px-8">
-          
+
           {/* Back Button */}
           <div className="mb-12">
             <Link
@@ -85,7 +80,7 @@ export default async function BlogContent({ post }: { post: any }) {
                   {format(new Date(post.date_published), 'MMMM d, yyyy')}
                 </time>
               )}
-              
+
               {Array.isArray(post.tags) && post.tags.length > 0 && (
                 <>
                   <span>·</span>
@@ -116,8 +111,8 @@ export default async function BlogContent({ post }: { post: any }) {
             </div>
           )}
 
-          {/* Content with comprehensive error handling */}
-          <div className="prose prose-neutral dark:prose-invert max-w-none
+          {/* Content with improved code styles */}
+          <div className={`prose prose-neutral dark:prose-invert max-w-none
             prose-headings:font-semibold prose-headings:tracking-tight
             prose-h1:text-3xl prose-h1:mt-12 prose-h1:mb-6
             prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
@@ -131,11 +126,13 @@ export default async function BlogContent({ post }: { post: any }) {
             prose-li:my-2
             prose-blockquote:border-l-2 prose-blockquote:border-border 
             prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-muted-foreground
-            prose-code:text-sm prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 
+            prose-code:text-sm prose-code:px-1.5 prose-code:py-0.5 
             prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-            prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg
-            prose-img:rounded-lg prose-img:my-8
-            prose-hr:border-border prose-hr:my-8">
+            prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-img:rounded-lg prose-img:my-8 prose-hr:border-border prose-hr:my-8
+            prose-code:bg-gray-100 prose-code:text-gray-800 dark:prose-code:bg-gray-800 dark:prose-code:text-gray-100
+            prose-pre:bg-gray-100 prose-pre:text-gray-800 dark:prose-pre:bg-gray-800 dark:prose-pre:text-gray-100
+          `}
+          >
             {sanitizedBody ? (
               <RenderMDX source={sanitizedBody} />
             ) : (

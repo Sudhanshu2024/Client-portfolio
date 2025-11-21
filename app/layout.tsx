@@ -19,8 +19,9 @@ const raleway = Raleway({
   variable: '--font-sans'
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
+// Production domain - hardcoded to prevent localhost in production
+const baseUrl = 'https://parth-k.vercel.app';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Parth Koshti';
 const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts';
 
 export const metadata: Metadata = {
@@ -30,9 +31,21 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
-  keywords: ['portfolio', 'web development', 'nextjs', 'react', 'typescript'],
+  keywords: ['portfolio', 'web development', 'nextjs', 'react', 'typescript', 'developer', 'programming'],
   authors: [{ name: 'Parth Koshti' }],
   creator: 'Parth Koshti',
+  publisher: 'Parth Koshti',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -45,9 +58,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteName,
     description: siteDescription,
-  },
-  alternates: {
-    canonical: baseUrl,
   },
 };
 

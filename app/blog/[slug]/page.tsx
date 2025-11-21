@@ -5,9 +5,11 @@ import BlogGrid from '@/components/BlogGrid';
 import type { Metadata } from 'next';
 
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Portfolio';
-
+// Production domain - hardcoded to prevent localhost in production
+const baseUrl = 'https://parth-k.vercel.app';
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Parth Koshti';
+const authorName = 'Parth Koshti';
+const publisherName = 'Parth Koshti';
 
 export async function generateMetadata(
   props: { params: Promise<{ slug: string }> }
@@ -19,29 +21,44 @@ export async function generateMetadata(
     return {
       title: 'Post Not Found',
       description: 'The requested blog post could not be found.',
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
   const description = post.preview || `Read ${post.title} on ${siteName}`;
   
- 
+  // Ensure keywords is always an array of strings
   const keywords = Array.isArray(post.tags) && post.tags.length > 0
-    ? post.tags
-    : ['blog', 'web development', 'technology'];
+    ? post.tags.map((tag: unknown) => String(tag))
+    : ['blog', 'web development', 'technology', 'programming'];
 
-  
+  // Construct full URL with production domain
   const postUrl = `${baseUrl}/blog/${post.slug}`;
-
 
   const publishedTime = post.date_published 
     ? new Date(post.date_published).toISOString()
     : undefined;
 
   return {
-    title: `${post.title} | ${siteName}`,
+    title: post.title,
     description: description,
     keywords: keywords,
-    authors: [{ name: siteName }],
+    authors: [{ name: authorName }],
+    publisher: publisherName,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     openGraph: {
       title: post.title,
       description: description,
@@ -50,6 +67,7 @@ export async function generateMetadata(
       type: 'article',
       locale: 'en_US',
       publishedTime: publishedTime,
+      authors: [authorName],
       images: post.thumbnail ? [
         {
           url: post.thumbnail,
@@ -71,9 +89,9 @@ export async function generateMetadata(
     // Article-specific metadata
     other: {
       'article:published_time': publishedTime || '',
-      'article:author': siteName,
+      'article:author': authorName,
       ...(Array.isArray(post.tags) && post.tags.length > 0 && {
-        'article:tag': post.tags.join(', '),
+        'article:tag': post.tags.map((tag: unknown) => String(tag)).join(', '),
       }),
     },
   };
