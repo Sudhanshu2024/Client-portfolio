@@ -5,7 +5,6 @@ import BlogGrid from '@/components/BlogGrid';
 import type { Metadata } from 'next';
 
 
-// Production domain - hardcoded to prevent localhost in production
 const baseUrl = 'https://parth-k.vercel.app';
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Parth Koshti';
 const authorName = 'Parth Koshti';
@@ -30,12 +29,12 @@ export async function generateMetadata(
 
   const description = post.preview || `Read ${post.title} on ${siteName}`;
   
-  // Ensure keywords is always an array of strings
+  
   const keywords = Array.isArray(post.tags) && post.tags.length > 0
     ? post.tags.map((tag: unknown) => String(tag))
     : ['blog', 'web development', 'technology', 'programming'];
 
-  // Construct full URL with production domain
+ 
   const postUrl = `${baseUrl}/blog/${post.slug}`;
 
   const publishedTime = post.date_published 
@@ -84,7 +83,7 @@ export async function generateMetadata(
     alternates: {
       canonical: postUrl,
     },
-    // Article-specific metadata
+   
     other: {
       'article:published_time': publishedTime || '',
       'article:author': authorName,
@@ -98,7 +97,7 @@ export async function generateMetadata(
 
 export const dynamic = "force-static";
 
-// Pre-generate all blog post pages at build time
+
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
   return posts.map((post) => ({

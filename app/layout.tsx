@@ -19,7 +19,7 @@ const raleway = Raleway({
   variable: '--font-sans'
 });
 
-// Production domain - hardcoded to prevent localhost in production
+
 const baseUrl = 'https://parth-k.vercel.app';
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Parth Koshti';
 const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION || 'Personal portfolio showcasing projects and blog posts';
