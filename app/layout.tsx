@@ -38,9 +38,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    "max-image-preview": "large",
-    "max-video-preview": -1,
-    "max-snippet": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   openGraph: {
     type: 'website',
