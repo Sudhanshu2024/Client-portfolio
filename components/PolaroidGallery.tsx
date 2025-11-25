@@ -22,7 +22,7 @@ interface PolaroidGalleryProps {
   className?: string;
 }
 
-// Rotation presets for variety
+
 const DEFAULT_ROTATIONS = [-3, 1, 4];
 
 export default function PolaroidGallery({ photos, className }: PolaroidGalleryProps) {

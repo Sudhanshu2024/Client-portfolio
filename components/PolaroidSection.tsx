@@ -1,7 +1,6 @@
 import PolaroidGallery from '@/components/PolaroidGallery';
 import { getPolaroidPhotoIds } from '@/lib/directus';
 
-// Photo metadata - titles and years for each photo
 const PHOTO_METADATA: Record<string, { title: string; subtitle: string; rotationDeg?: number }> = {
   '772f67b8-343d-45b2-8d5a-501299d87560': {
     title: 'Diving in Koh Tao, Thailand',
