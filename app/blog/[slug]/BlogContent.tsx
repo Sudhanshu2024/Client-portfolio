@@ -9,8 +9,6 @@ import { RenderMDX } from "@/lib/mdx";
 // Sanitize content to prevent MDX parsing errors
 function sanitizeContent(content: string): string {
   if (!content) return '';
-
-  // Replace problematic patterns that break MDX
   return content
     .replace(/\s<(\d+)/g, ' &lt;$1')
     .replace(/(\d+)>\s/g, '$1&gt; ')
@@ -46,9 +44,8 @@ export default async function BlogContent({ post }: { post: any }) {
   return (
     <BlogAnimation>
       <article className="min-h-screen py-12 sm:py-16 md:py-20">
-        {/* Narrow content container */}
         <div className="max-w-2xl mx-auto px-6 sm:px-8">
-
+          
           {/* Back Button */}
           <div className="mb-12">
             <Link
@@ -65,22 +62,17 @@ export default async function BlogContent({ post }: { post: any }) {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 leading-tight tracking-tight">
               {post.title}
             </h1>
-
-            {/* Subtitle/Preview if available */}
             {post.preview && (
               <p className="text-lg sm:text-xl text-muted-foreground mb-6 leading-relaxed">
                 {post.preview}
               </p>
             )}
-
-            {/* Meta info */}
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               {post.date_published && (
                 <time dateTime={post.date_published}>
                   {format(new Date(post.date_published), 'MMMM d, yyyy')}
                 </time>
               )}
-
               {Array.isArray(post.tags) && post.tags.length > 0 && (
                 <>
                   <span>·</span>
@@ -111,7 +103,7 @@ export default async function BlogContent({ post }: { post: any }) {
             </div>
           )}
 
-          {/* Content with improved code styles */}
+          {/* Universal code block contrast for all triple backtick blocks */}
           <div className={`prose prose-neutral dark:prose-invert max-w-none
             prose-headings:font-semibold prose-headings:tracking-tight
             prose-h1:text-3xl prose-h1:mt-12 prose-h1:mb-6
@@ -128,9 +120,11 @@ export default async function BlogContent({ post }: { post: any }) {
             prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-muted-foreground
             prose-code:text-sm prose-code:px-1.5 prose-code:py-0.5 
             prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-            prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-img:rounded-lg prose-img:my-8 prose-hr:border-border prose-hr:my-8
-            prose-code:bg-gray-100 prose-code:text-gray-800 dark:prose-code:bg-gray-800 dark:prose-code:text-gray-100
-            prose-pre:bg-gray-100 prose-pre:text-gray-800 dark:prose-pre:bg-gray-800 dark:prose-pre:text-gray-100
+            prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:rounded-lg prose-pre:border prose-pre:border-slate-700
+            dark:prose-pre:bg-slate-950 dark:prose-pre:text-slate-100 dark:prose-pre:border-slate-800
+            prose-code:bg-slate-900 prose-code:text-slate-100 
+            dark:prose-code:bg-slate-950 dark:prose-code:text-slate-100
+            prose-img:rounded-lg prose-img:my-8 prose-hr:border-border prose-hr:my-8
           `}
           >
             {sanitizedBody ? (
